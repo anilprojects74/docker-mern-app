@@ -1,37 +1,52 @@
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = ({ setAuth }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email && password) {
+
+    if (!email || !password) {
+      return toast.warn('⚠️ Please enter both email and password');
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/login',{
+        email,
+        password
+      });
+
+      toast.success('✅ Logged in successfully!');
       setAuth(true);
-      navigate('/dashboard');
-    } else {
-      alert('Please enter both email and password');
+      setTimeout(() => navigate('/dashboard'), 1500); // Wait for toast to finish
+
+    } catch (err) {
+      console.error(err);
+      const errorMsg = err.response?.data?.message || 'Login failed';
+      toast.error(`❌ ${errorMsg}`);
     }
   };
 
   return (
     <Container fluid className="p-0 m-0 login-page">
       <Row className="vh-100 g-0">
-        {/* FULL SCREEN – Background Image */}
         <Col
           xs={12}
           className="d-flex align-items-center justify-content-center position-relative"
         >
           <img
-            src="/login.jpg" // Image from the public folder
+            src="/login.jpg"
             alt="illustration"
             className="bg-image"
           />
-          
-          {/* RIGHT SIDE – Login Form */}
+
           <Card
             className="login-card p-4 p-sm-5 shadow-lg"
             style={{
@@ -42,7 +57,7 @@ const Login = ({ setAuth }) => {
               width: '100%',
               maxWidth: '450px',
               borderRadius: '16px',
-              zIndex: 10, // Higher z-index for the floating effect
+              zIndex: 10,
             }}
           >
             <div className="text-center mb-4">
@@ -94,7 +109,8 @@ const Login = ({ setAuth }) => {
         </Col>
       </Row>
 
-      {/* Inline Styles */}
+      <ToastContainer position="top-center" autoClose={2000} />
+
       <style jsx="true">{`
         .login-page {
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -109,20 +125,20 @@ const Login = ({ setAuth }) => {
           left: 0;
           width: 100%;
           height: 100%;
-          object-fit: cover; /* Ensure the image covers the entire container */
+          object-fit: cover;
         }
 
         .login-card {
-          background: rgba(255, 255, 255, 0.9); /* Slight transparency */
+          background: rgba(255, 255, 255, 0.9);
           border-radius: 16px;
           padding: 2rem;
-          box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1); /* Floating shadow effect */
+          box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1);
           transition: all 0.3s ease;
         }
 
         .login-card:hover {
-          box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.2); /* Larger shadow on hover */
-          transform: translateY(-5px); /* Slight upward movement on hover */
+          box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.2);
+          transform: translateY(-5px);
         }
       `}</style>
     </Container>

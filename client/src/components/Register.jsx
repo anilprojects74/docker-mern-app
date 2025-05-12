@@ -1,55 +1,65 @@
-import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = ({ setAuth }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-    if (email && password && confirmPassword) {
-      if (password !== confirmPassword) {
-        alert('Passwords do not match');
+  const initialValues = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+  };
+
+  const validationSchema = Yup.object({
+    email: Yup.string().email('Invalid email format').required('Email is required'),
+    password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
+  });
+
+  const handleSubmit = async (values, { setSubmitting, setStatus }) => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: values.email, password: values.password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        toast.success('Account created successfully! Redirecting to login...', {
+          position: 'top-right',
+          autoClose: 2000,
+        });
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
       } else {
-        setAuth(true);
-        navigate('/dashboard');
+        setStatus(data?.message || 'Registration failed');
       }
-    } else {
-      alert('Please fill in all fields');
+    } catch (err) {
+      console.error(err);
+      setStatus('Server error. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
     <Container fluid className="p-0 m-0 register-page">
+      <ToastContainer />
       <Row className="vh-100 g-0">
-        {/* FULL SCREEN – Background Image */}
-        <Col
-          xs={12}
-          className="d-flex align-items-center justify-content-center position-relative"
-        >
-          <img
-            src="/login.jpg" // Image from public folder
-            alt="illustration"
-            className="bg-image"
-          />
-          
-          {/* RIGHT SIDE – Registration Form */}
-          <Card
-            className="register-card p-4 p-sm-5 shadow-lg"
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '100%',
-              maxWidth: '450px',
-              borderRadius: '16px',
-              zIndex: 10, // Higher z-index for the floating effect
-            }}
-          >
+        <Col xs={12} className="d-flex align-items-center justify-content-center position-relative">
+          <img src="/login.jpg" alt="illustration" className="bg-image" />
+
+          <Card className="register-card p-4 p-sm-5 shadow-lg">
             <div className="text-center mb-4">
               <h3 style={{ fontWeight: 600 }}>Create a New Account</h3>
               <p className="text-muted" style={{ fontSize: '0.9rem' }}>
@@ -57,59 +67,55 @@ const Register = ({ setAuth }) => {
               </p>
             </div>
 
-            <Form onSubmit={handleRegister}>
-              <Form.Group controlId="formBasicEmail" className="mb-3">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </Form.Group>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({ status, isSubmitting }) => (
+                <Form>
+                  {status && <Alert variant="danger">{status}</Alert>}
 
-              <Form.Group controlId="formBasicPassword" className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </Form.Group>
+                  <div className="mb-3">
+                    <label>Email address</label>
+                    <Field name="email" type="email" className="form-control" />
+                    <div className="text-danger small mt-1">
+                      <ErrorMessage name="email" />
+                    </div>
+                  </div>
 
-              <Form.Group controlId="formConfirmPassword" className="mb-3">
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Confirm password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-              </Form.Group>
+                  <div className="mb-3">
+                    <label>Password</label>
+                    <Field name="password" type="password" className="form-control" />
+                    <div className="text-danger small mt-1">
+                      <ErrorMessage name="password" />
+                    </div>
+                  </div>
 
-              <div className="d-flex justify-content-between mb-3">
-                <Form.Check type="checkbox" label="I agree to the terms and conditions" />
-              </div>
+                  <div className="mb-3">
+                    <label>Confirm Password</label>
+                    <Field name="confirmPassword" type="password" className="form-control" />
+                    <div className="text-danger small mt-1">
+                      <ErrorMessage name="confirmPassword" />
+                    </div>
+                  </div>
 
-              <Button type="submit" className="w-100" variant="primary" style={{ borderRadius: '8px' }}>
-                Register
-              </Button>
+                  <Button type="submit" className="w-100" variant="primary" disabled={isSubmitting}>
+                    {isSubmitting ? 'Registering...' : 'Register'}
+                  </Button>
 
-              <div className="text-center mt-3">
-                <span className="text-muted" style={{ fontSize: '0.9rem' }}>
-                  Already have an account? <Link to="/login">Log in</Link>
-                </span>
-              </div>
-            </Form>
+                  <div className="text-center mt-3">
+                    <span className="text-muted" style={{ fontSize: '0.9rem' }}>
+                      Already have an account? <Link to="/login">Log in</Link>
+                    </span>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </Card>
         </Col>
       </Row>
 
-      {/* Inline Styles */}
       <style jsx="true">{`
         .register-page {
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -128,16 +134,15 @@ const Register = ({ setAuth }) => {
         }
 
         .register-card {
-          background: rgba(255, 255, 255, 0.9);
+          background: rgba(255, 255, 255, 0.95);
           border-radius: 16px;
-          padding: 2rem;
-          box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.1);
-          transition: all 0.3s ease;
-        }
-
-        .register-card:hover {
-          box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.2);
-          transform: translateY(-5px);
+          max-width: 450px;
+          width: 100%;
+          z-index: 10;
+          transform: translate(-50%, -50%);
+          position: absolute;
+          top: 50%;
+          left: 50%;
         }
       `}</style>
     </Container>
