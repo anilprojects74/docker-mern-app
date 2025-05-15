@@ -26,9 +26,9 @@ All services are dockerized and wired together using `docker-compose`.
 
 ```
 .
-├── backend/              # Express server code
+├── server/              # Express server code
 │   └── ...
-├── frontend/             # React client app (Vite)
+├── client/             # React client app (Vite)
 │   └── ...
 ├── nginx/                # Nginx reverse proxy config
 │   └── default.conf
