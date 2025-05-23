@@ -34,21 +34,9 @@ All services are dockerized and wired together using `docker-compose`.
 │   └── default.conf
 ├── docker-compose.yml    # Docker Compose configuration
 └── README.md
+
+---
 ```
-
----
-
-## 📁 Usage
-
-Create a .env file in root of and add ENVIRONMENT=production  or ENVIRONMENT=development based on working mode
-
-cd into parent folder cd docker-mern-app
-
-Run ./docker-compose.sh 
-
-Done app will started initializing React,Sql,Express,Nginx will be served on host ip address (Port 80)
-
----
 
 ## ⚙️ Features
 
@@ -72,16 +60,19 @@ cd your-repo
 
 ---
 
-### 2. Configure Environment Variables
+### 2. Configure Environment Variables and Usage
 
-Create a `.env` file in the root (or define inline in `docker-compose.yml`):
+Make sure docker is installed and running in the server
 
-```env
-MYSQL_ROOT_PASSWORD=yourpassword
-MYSQL_DATABASE=mydb
-MYSQL_USER=user
-MYSQL_PASSWORD=pass
-```
+Pull the repo and
+
+cd into parent folder cd docker-mern-app
+
+Create a .env file in root of and add ENVIRONMENT=production  or ENVIRONMENT=development based on working mode
+
+Run ./docker-compose.sh 
+
+Done app will started initializing React,Sql,Express,Nginx will be served on host ip address (Port 80)
 
 ---
 
