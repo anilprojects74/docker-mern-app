@@ -79,7 +79,7 @@ Done app will started initializing React,Sql,Express,Nginx will be served on hos
 ### 3. Start All Services
 
 ```bash
-docker-compose up --build
+./docker-compose.sh 
 ```
 
 ---
