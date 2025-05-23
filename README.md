@@ -37,6 +37,15 @@ All services are dockerized and wired together using `docker-compose`.
 ```
 
 ---
+## 📁 Usage
+
+Create a .env file in root of and add ENVIRONMENT=production  or ENVIRONMENT=development based on working mode
+
+cd into parent folder cd docker-mern-app
+
+./docker-compose.sh 
+
+Done app will started initializing React,Sql,Express,Nginx will be served on current ip addess (Port 80)
 
 ## ⚙️ Features
 
