@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+
+import GreenLoader from './GreenLoader';
 
 const stats = [
   { title: 'Users', value: '1,024', icon: '👥' },
@@ -12,89 +14,110 @@ const recentOrders = [
   { id: '#12345', product: 'Product A', amount: '$120', status: 'Shipped' },
   { id: '#12346', product: 'Product B', amount: '$150', status: 'Pending' },
   { id: '#12347', product: 'Product C', amount: '$200', status: 'Delivered' },
-  { id: '#12345', product: 'Product A', amount: '$120', status: 'Shipped' },
+  { id: '#12348', product: 'Product D', amount: '$90', status: 'Shipped' },
   { id: '#12346', product: 'Product B', amount: '$150', status: 'Pending' },
   { id: '#12347', product: 'Product C', amount: '$200', status: 'Delivered' },
-  { id: '#12345', product: 'Product A', amount: '$120', status: 'Shipped' },
-  { id: '#12346', product: 'Product B', amount: '$150', status: 'Pending' },
-  { id: '#12347', product: 'Product C', amount: '$200', status: 'Delivered' },
+  { id: '#12348', product: 'Product D', amount: '$90', status: 'Shipped' },
 ];
 
 const containerVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
+  visible: { opacity: 1, transition: { duration: 0.3 } }, // ❗ removed stagger
 };
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await new Promise(res => setTimeout(res, 1700)); // ✅ shorter wait
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div style={styles.page}>
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        style={styles.welcome}
-      >
-        Welcome back, Admin!
-      </motion.h1>
+    <>
+      <GreenLoader
+        isLoading={isLoading}
+        duration={10000}
+        size="large"
+        message="Loading Dashboard..."
+        onComplete={() => console.log('Dashboard loaded!')}
+      />
 
-      <motion.div
-        style={styles.statsGrid}
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {stats.map(({ title, value, icon }, i) => (
-          <motion.div
-            key={i}
-            variants={cardVariants}
-            whileHover={{ scale: 1.05, boxShadow: '0 6px 15px rgba(0,0,0,0.15)' }}
-            style={styles.statCard}
+      {!isLoading && (
+        <div style={styles.page}>
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            style={styles.welcome}
           >
-            <div style={styles.icon}>{icon}</div>
-            <div>
-              <h4 style={{ margin: 0 }}>{title}</h4>
-              <p style={styles.statValue}>{value}</p>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+            Welcome back, Admin!
+          </motion.h1>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        style={styles.tableContainer}
-      >
-        <h2 style={{ marginBottom: 12 }}>Recent Orders</h2>
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              <th style={styles.th}>Order ID</th>
-              <th style={styles.th}>Product</th>
-              <th style={styles.th}>Amount</th>
-              <th style={styles.th}>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recentOrders.map(({ id, product, amount, status }) => (
-              <tr key={id}>
-                <td style={styles.td}>{id}</td>
-                <td style={styles.td}>{product}</td>
-                <td style={styles.td}>{amount}</td>
-                <td style={{ ...styles.td, fontWeight: '600', color: statusColor(status) }}>
-                  {status}
-                </td>
-              </tr>
+          <motion.div
+            style={styles.statsGrid}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {stats.map(({ title, value, icon }, i) => (
+              <motion.div
+                key={i}
+                variants={cardVariants}
+                whileHover={{ scale: 1.05 }}
+                style={styles.statCard}
+              >
+                <div style={styles.icon}>{icon}</div>
+                <div>
+                  <h4 style={{ margin: 0 }}>{title}</h4>
+                  <p style={styles.statValue}>{value}</p>
+                </div>
+              </motion.div>
             ))}
-          </tbody>
-        </table>
-      </motion.div>
-    </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            style={styles.tableContainer}
+          >
+            <h2 style={{ marginBottom: 12 }}>Recent Orders</h2>
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>Order ID</th>
+                  <th style={styles.th}>Product</th>
+                  <th style={styles.th}>Amount</th>
+                  <th style={styles.th}>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentOrders.map(({ id, product, amount, status }) => (
+                  <tr key={id}>
+                    <td style={styles.td}>{id}</td>
+                    <td style={styles.td}>{product}</td>
+                    <td style={styles.td}>{amount}</td>
+                    <td style={{ ...styles.td, fontWeight: '600', color: statusColor(status) }}>
+                      {status}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </motion.div>
+        </div>
+      )}
+    </>
   );
 };
 

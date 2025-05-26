@@ -7,6 +7,9 @@ import Dashboard from './components/Dashboard';
 import AuthRedirect from './layout/AuthRedirect';
 import MainLayout from './layout/MainLayout';
 
+
+import "./index.css"
+
 function App() {
   
   return (
