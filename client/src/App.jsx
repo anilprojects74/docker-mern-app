@@ -5,6 +5,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 
 import AuthRedirect from './layout/AuthRedirect';
+import MainLayout from './layout/MainLayout';
 
 function App() {
   
@@ -13,7 +14,7 @@ function App() {
       <Route path="/" element={<AuthRedirect />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={ <Dashboard />} />
+      <Route path="/dashboard" element={ <MainLayout><Dashboard /></MainLayout>} />
     </Routes>
   )
 }
