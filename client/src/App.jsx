@@ -4,14 +4,15 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+import AuthRedirect from './layout/AuthRedirect';
 
+function App() {
+  
   return (
     <Routes>
-      <Route path="/" element={<Login setAuth={setIsAuthenticated} />} />
-      <Route path="/login" element={<Login setAuth={setIsAuthenticated} />} />
-      <Route path="/register" element={<Register setAuth={setIsAuthenticated}/>} />
+      <Route path="/" element={<AuthRedirect />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/dashboard" element={ <Dashboard />} />
     </Routes>
   )

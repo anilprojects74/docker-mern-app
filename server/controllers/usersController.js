@@ -1,9 +1,11 @@
 // User Creation Tested 
 const bcrypt = require('bcryptjs'); //encryption of password
 const crypto = require('crypto'); // confirmation token generators
+const jwt = require('jsonwebtoken');
 const db = require('../db'); 
 
 const generateToken = () => crypto.randomBytes(32).toString('hex');
+const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
 
 // Get all users
 exports.getAllUsers = async (req, res) => {
@@ -93,45 +95,53 @@ exports.deleteUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
-    const { email, password } = req.body;
-  
-    console.log("looog in")
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required.' });
+  const { email, password } = req.body;
+
+  console.log("Logging in");
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required.' });
+  }
+
+  try {
+    const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
     }
-  
-    try {
-      const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
-  
-      if (rows.length === 0) {
-        return res.status(401).json({ message: 'Invalid email or password.' });
-      }
-  
-      const user = rows[0];
-  
-      if (!user.is_confirmed) {
-        return res.status(403).json({ message: 'Please confirm your email before logging in.' });
-      }
-  
-      const isMatch = await bcrypt.compare(password, user.password);
-  
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid email or password.' });
-      }
-  
-      // Optional: generate JWT here if you're using sessions or auth tokens
-  
-      res.status(200).json({
-        message: 'Login successful',
-        user: {
-          id: user.id,
-          email: user.email,
-          created_at: user.created_at
-        }
-      });
-  
-    } catch (err) {
-      console.error('Login failed:', err);
-      res.status(500).json({ message: 'Internal server error', error: err.message });
+
+    const user = rows[0];
+
+    if (!user.is_confirmed) {
+      return res.status(403).json({ message: 'Please confirm your email before logging in.' });
     }
-  };
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid email or password.' });
+    }
+
+    // ✅ Generate JWT
+    const token = jwt.sign(
+      { id: user.id, email: user.email },   // payload with user info
+      JWT_SECRET,                            // secret key to sign the token
+      { expiresIn: '1h' }                  // token expiration time
+    );
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        created_at: user.created_at
+      }
+    });
+
+  } catch (err) {
+    console.error('Login failed:', err);
+    res.status(500).json({ message: 'Internal server error', error: err.message });
+  }
+};
+

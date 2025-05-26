@@ -5,34 +5,39 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Login = ({ setAuth }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     if (!email || !password) {
       return toast.warn('⚠️ Please enter both email and password');
     }
-
+  
     try {
-      const response = await axios.post('/api/users/login',{
+      const response = await axios.post('/api/users/login', {
         email,
         password
       });
-
+      
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem('auth_token', token);
+      }
+  
       toast.success('✅ Logged in successfully!');
-      setAuth(true);
-      setTimeout(() => navigate('/dashboard'), 1500); // Wait for toast to finish
-
+      setTimeout(() => navigate('/dashboard'), 1500);
+  
     } catch (err) {
       console.error(err);
       const errorMsg = err.response?.data?.message || 'Login failed';
       toast.error(`❌ ${errorMsg}`);
     }
   };
+  
 
   return (
     <Container fluid className="p-0 m-0 login-page">

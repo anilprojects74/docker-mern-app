@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Nav, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
+import useSetAuthHeaders from '../hooks/useSetAuthHeaders';
+
 const MainLayout = ({ children }) => {
+
+  useSetAuthHeaders()
   const navigate = useNavigate();
   const [sidebarVisible, setSidebarVisible] = useState(false);
 
@@ -14,7 +18,7 @@ const MainLayout = ({ children }) => {
 
   const handleLogout = () => {
     alert('Logged out!');
-    localStorage.removeItem('auth');
+    localStorage.removeItem('auth_token');
     navigate('/login');
     window.location.reload();
   };

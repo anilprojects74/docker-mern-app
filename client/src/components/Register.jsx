@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { Button, Container, Row, Col, Card, Alert } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Register = ({ setAuth }) => {
@@ -25,28 +26,24 @@ const Register = ({ setAuth }) => {
 
   const handleSubmit = async (values, { setSubmitting, setStatus }) => {
     try {
-      const res = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: values.email, password: values.password }),
+      const res = await axios.post('/api/users', {
+        email: values.email,
+        password: values.password,
       });
 
-      const data = await res.json();
+      toast.success('Account created successfully! Redirecting to login...', {
+        position: 'top-right',
+        autoClose: 2000,
+      });
 
-      if (res.ok) {
-        toast.success('Account created successfully! Redirecting to login...', {
-          position: 'top-right',
-          autoClose: 2000,
-        });
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } else {
-        setStatus(data?.message || 'Registration failed');
-      }
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } catch (err) {
       console.error(err);
-      setStatus('Server error. Please try again.');
+      const errorMessage =
+        err.response?.data?.message || 'Server error. Please try again.';
+      setStatus(errorMessage);
     } finally {
       setSubmitting(false);
     }
