@@ -2,9 +2,113 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <meta name="theme-color" content="#22c55e" />
+    <meta name="description" content="Modern React application powered by Vite - Lightning fast development experience" />
+    
+    <!-- Custom Green-themed Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='viteGreen' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2322c55e'/><stop offset='50%' stop-color='%2316a34a'/><stop offset='100%' stop-color='%2315803d'/></linearGradient><filter id='glow'><feGaussianBlur stdDeviation='3' result='coloredBlur'/><feMerge><feMergeNode in='coloredBlur'/><feMergeNode in='SourceGraphic'/></feMerge></filter></defs><circle cx='50' cy='50' r='45' fill='url(%23viteGreen)' filter='url(%23glow)'/><polygon points='35,65 50,25 65,65' fill='%23ffffff' opacity='0.9'/><circle cx='50' cy='70' r='8' fill='%23ffffff' opacity='0.8'/><path d='M25 35 Q50 15 75 35' stroke='%23a7f3d0' stroke-width='2' fill='none' opacity='0.7'/></svg>" />
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><defs><linearGradient id='appleBG' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2322c55e'/><stop offset='100%' stop-color='%2315803d'/></linearGradient></defs><rect width='180' height='180' rx='32' fill='url(%23appleBG)'/><polygon points='63,117 90,45 117,117' fill='%23ffffff' opacity='0.95'/><circle cx='90' cy='126' r='14' fill='%23ffffff' opacity='0.9'/></svg>" />
+    
+    <!-- Enhanced Title with Visual Elements -->
+    <title>⚡🌿 ViteReact Pro | Ultra-Fast Development • Green Theme • Modern UI ⚛️✨</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json,{%22name%22:%22ViteReact Pro%22,%22short_name%22:%22ViteReact%22,%22theme_color%22:%22%2322c55e%22,%22background_color%22:%22%23dcfce7%22,%22display%22:%22standalone%22,%22start_url%22:%22/%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><circle cx='256' cy='256' r='240' fill='%2322c55e'/><polygon points='180,360 256,120 332,360' fill='white'/></svg>%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22}]}" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="⚡🌿 ViteReact Pro - Lightning Fast Development" />
+    <meta property="og:description" content="Modern React application with Vite bundling and beautiful green theme" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 630'><defs><linearGradient id='ogBG' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2322c55e'/><stop offset='50%' stop-color='%2316a34a'/><stop offset='100%' stop-color='%2315803d'/></linearGradient></defs><rect width='1200' height='630' fill='url(%23ogBG)'/><text x='600' y='280' text-anchor='middle' font-family='Arial,sans-serif' font-size='64' font-weight='bold' fill='white'>⚡ ViteReact Pro</text><text x='600' y='350' text-anchor='middle' font-family='Arial,sans-serif' font-size='32' fill='%23dcfce7'>Lightning Fast • Modern • Green</text><polygon points='500,400 600,450 700,400' fill='white' opacity='0.8'/></svg>" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="⚡🌿 ViteReact Pro" />
+    <meta name="twitter:description" content="Ultra-fast React development with beautiful green theme" />
+    
+    <!-- Inline Styles for Enhanced UI -->
+    <style>
+        :root {
+            --primary-green: #22c55e;
+            --secondary-green: #16a34a;
+            --dark-green: #15803d;
+            --light-green: #dcfce7;
+            --accent-green: #a7f3d0;
+        }
+        
+        /* Browser Chrome Styling */
+        body {
+            background: linear-gradient(135deg, var(--light-green) 0%, var(--accent-green) 100%);
+            color: var(--dark-green);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        }
+        
+        /* Title Animation */
+        @keyframes titleGlow {
+            0%, 100% { 
+                text-shadow: 0 0 5px var(--primary-green); 
+            }
+            50% { 
+                text-shadow: 0 0 15px var(--primary-green), 0 0 25px var(--secondary-green); 
+            }
+        }
+        
+        title {
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+        
+        /* Loading Animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--light-green);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-green), var(--secondary-green));
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--secondary-green), var(--dark-green));
+        }
+        
+        /* Selection Styling */
+        ::selection {
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        ::-moz-selection {
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        /* Focus Ring Styling */
+        :focus-visible {
+            outline: 2px solid var(--primary-green);
+            outline-offset: 2px;
+        }
+    </style>
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="dns-prefetch" href="//vitejs.dev" />
+    
+    <!-- Performance Hints -->
+    <link rel="prefetch" href="/src/main.jsx" />
+    <link rel="preload" href="/src/App.jsx" as="script" />
   </head>
   <body>
     <div id="root"></div>
